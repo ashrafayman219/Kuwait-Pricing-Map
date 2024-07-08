@@ -6,7 +6,7 @@ let featureLayers = [];
 let geojsons = [
   {
     regionsURL:
-      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/KuwaitTest.json",
+      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/KT.json",
     title: "Kuwait Pricing",
   },
 ];
@@ -56,7 +56,7 @@ async function initializeMapKuwaitPricing() {
       style: "solid",
       outline: {
         width: 0.2,
-        color: [255, 255, 255, 0.5],
+        color: "white",
       },
     };
 
@@ -66,7 +66,7 @@ async function initializeMapKuwaitPricing() {
       style: "solid",
       outline: {
         width: 0.2,
-        color: [255, 255, 255, 0.5],
+        color: "white",
       },
     };
 
@@ -76,7 +76,7 @@ async function initializeMapKuwaitPricing() {
       style: "solid",
       outline: {
         width: 0.2,
-        color: [255, 255, 255, 0.5],
+        color: "white",
       },
     };
 
@@ -115,7 +115,7 @@ async function initializeMapKuwaitPricing() {
       field: "Average",
       // normalizationField: "EDUCBASECY",
       legendOptions: {
-        title: "Dubai prices",
+        title: "Kuwait prices",
       },
       defaultSymbol: {
         type: "simple-fill", // autocasts as new SimpleFillSymbol()
@@ -217,6 +217,47 @@ async function initializeMapKuwaitPricing() {
       },
     };
 
+    let moveHighlight = null;
+    let selectedHighlight = null;
+    let selectedGraphic = null;
+
+    function clearSelection() {
+      if (selectedHighlight) {
+        selectedHighlight.remove();
+        selectedHighlight = null;
+        selectedGraphic = null;
+      }
+    }
+    
+    function openSecondCard() {
+      document.getElementById("first-card").style.display = "none";
+      document.getElementById("second-card").style.display = "block";
+    }
+
+    document.getElementById("backButton").addEventListener('click', closeSecondCard)
+    function closeSecondCard() {
+      clearSelection()
+      view.whenLayerView(pricingBuy).then(function (layerView) {
+        view.goTo(
+          {
+            target: pricingBuy.fullExtent,
+            // zoom: 11
+          },
+          {
+            duration: 2000,
+          }
+        );
+      });
+
+      document.getElementById("second-card").style.display = "none";
+      document.getElementById("first-card").style.display = "block";
+    }
+
+    var areaDetails = document.getElementById("areaDetails");
+    var areaNH = document.getElementById("areaNH");
+    var H = document.getElementById("H");
+    var Av = document.getElementById("Av");
+    var L = document.getElementById("L");
     async function createFeatureLayers(geojsons) {
       const arrayFeatures = [];
       for (const geojsonURL of geojsons) {
@@ -271,16 +312,23 @@ async function initializeMapKuwaitPricing() {
       if (featureLayers) {
         featureLayers.map((layer) => {
           displayMap.add(layer);
+          view.ui.add("first-card", "bottom-left");
+          view.ui.add("second-card", "bottom-left");
           if (layer.title === "Kuwait Pricing") {
             pricingBuy = layer;
+            console.log(layer, "layereee");
             // layer.labelingInfo = labelClass;
             layer.popupTemplate = template;
+            layer.orderBy = [{
+              field: "Space",
+              order: "descending"  // "descending" | "ascending"
+            }];
             // layer.visible = false;
             view.whenLayerView(layer).then(function (layerView) {
               view.goTo(
                 {
                   target: layer.fullExtent,
-                  zoom: 11
+                  // zoom: 11
                 },
                 {
                   duration: 2000,
@@ -293,9 +341,9 @@ async function initializeMapKuwaitPricing() {
               .then(() => layer.when())
               .then(() => view.whenLayerView(layer))
               .then((layerView) => {
-                let moveHighlight = null;
-                let selectedHighlight = null;
-                let selectedGraphic = null;
+                // let moveHighlight = null;
+                // let selectedHighlight = null;
+                // let selectedGraphic = null;
 
                 view.on("pointer-move", (evt) => handleEvent(evt, false));
                 view.on("click", (evt) => handleEvent(evt, true));
@@ -312,7 +360,17 @@ async function initializeMapKuwaitPricing() {
                         if (selectedHighlight) {
                           selectedHighlight.remove();
                         }
+                        document.getElementById("first-card").style.display =
+                          "none";
+                        document.getElementById("second-card").style.display =
+                          "block";
                         selectedGraphic = graphic;
+                        console.log(graphic, "graphS");
+                        areaNH.innerHTML = graphic.attributes.areaName;
+
+                        H.innerHTML = graphic.attributes.Highest;
+                        Av.innerHTML = graphic.attributes.Average;
+                        L.innerHTML = graphic.attributes.Lowest;
                         view.highlightOptions = {
                           color: "#000000",
                           fillOpacity: 0,
@@ -325,7 +383,7 @@ async function initializeMapKuwaitPricing() {
                         view.goTo(
                           {
                             target: graphic,
-                            zoom: 11
+                            // zoom: 11
                           },
                           {
                             duration: 1000,
@@ -339,7 +397,7 @@ async function initializeMapKuwaitPricing() {
                           view.highlightOptions = {
                             color: "#000000",
                             fillOpacity: 0,
-                            haloOpacity: 0.8,
+                            haloOpacity: 1,
                             haloColor: "black",
                             shadowColor: "black",
                             shadowOpacity: 1,
@@ -350,6 +408,19 @@ async function initializeMapKuwaitPricing() {
                     } else {
                       if (isClick) {
                         clearSelection();
+                        view.goTo(
+                          {
+                            target: layer.fullExtent,
+                            // zoom: 11
+                          },
+                          {
+                            duration: 2000,
+                          }
+                        );
+                        document.getElementById("second-card").style.display =
+                          "none";
+                        document.getElementById("first-card").style.display =
+                          "block";
                       } else {
                         removeMoveHighlight();
                       }
@@ -364,13 +435,7 @@ async function initializeMapKuwaitPricing() {
                   }
                 }
 
-                function clearSelection() {
-                  if (selectedHighlight) {
-                    selectedHighlight.remove();
-                    selectedHighlight = null;
-                    selectedGraphic = null;
-                  }
-                }
+
               })
               .catch((error) => {
                 console.error("Error initializing map:", error);
