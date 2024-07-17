@@ -350,6 +350,29 @@ async function initializeMapKuwaitPricing() {
     });
     view.popupEnabled = false;
 
+    document.querySelector(".btns").addEventListener("click", (event) => {
+      /************************************************************
+       * On a button click, change the map of the View
+       ************************************************************/
+      const id = event.target.getAttribute("data-id");
+      if (id) {
+        const webmap = webmaps[id];
+        view.map = webmap;
+        const nodes = document.querySelectorAll(".btn-switch");
+        for (let idx = 0; idx < nodes.length; idx++) {
+          const node = nodes[idx];
+          const mapIndex = node.getAttribute("data-id");
+          if (mapIndex === id) {
+            node.classList.add("active-map");
+          } else {
+            node.classList.remove("active-map");
+          }
+        }
+      }
+    });
+
+
+    
     const calsiteshell = document.getElementById("calsite-shell");
     calsiteshell.style.display = "none"; // Hide calsite-shell initially
 
@@ -511,7 +534,7 @@ async function initializeMapKuwaitPricing() {
                 // zoom: 11
               },
               {
-                duration: 2500,
+                duration: 2000,
               }
             );
           });
@@ -792,6 +815,9 @@ async function addWidgets() {
       view: view,
       listItemCreatedFunction: function (event) {
         var item = event.item;
+        if (item.layer.type === "group"){
+          item.open = true;
+        }
         // item.watch("visible", (event) => {
         //   layerList.operationalItems.forEach((layerView) => {
         //     if (layerView.layer.id != item.layer.id) {

@@ -10,15 +10,56 @@
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
   <style>
     html,
-    body,
-    #displayMap {
+    body
+      {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
       background-color: rgb(232, 243, 243);
-      
+      overflow: hidden;
     }
+
+    #displayMap {
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 60px;
+        bottom: 0;
+      }
+
+      .header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 10%;
+      }
+
+      .btns {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
+      }
+
+      .btn-switch {
+        flex-grow: 4;
+        background-color: rgba(34, 111, 14, 0.5);
+        color: #fff;
+        margin: 1px;
+        width: 50%;
+        padding: 20px;
+        overflow: auto;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .active-map {
+        color: #fff;
+        background-color: rgba(34, 111, 14, 1);
+      }
 
     
     /* #displayMap {
@@ -44,64 +85,31 @@
 </head>
 
 <body>
-  <!-- <calcite-shell>
-    <calcite-shell-panel slot="panel-start" position="start" id="contents">
-      <calcite-combobox id="categorySelect" placeholder="Filter by category" overlay-positioning="fixed" selection-mode="single">
-        <calcite-combobox-item selected value="10000" text-label="Arts and Entertainment"></calcite-combobox-item>
-        <calcite-combobox-item value="11000" text-label="Business and Professional Services"></calcite-combobox-item>
-        <calcite-combobox-item value="12000" text-label="Community and Government"></calcite-combobox-item>
-        <calcite-combobox-item value="13000" text-label="Dining and Drinking"></calcite-combobox-item>
-        <calcite-combobox-item value="15000" text-label="Health and Medicine"></calcite-combobox-item>
-        <calcite-combobox-item value="16000" text-label="Landmarks and Outdoors"></calcite-combobox-item>
-        <calcite-combobox-item value="17000" text-label="Retail"></calcite-combobox-item>
-        <calcite-combobox-item value="18000" text-label="Sports and Recreation"></calcite-combobox-item>
-        <calcite-combobox-item value="19000" text-label="Travel and Transportation"></calcite-combobox-item>
-      </calcite-combobox>
-      <calcite-panel class="contents">
-        <calcite-flow id="flow">
-          <calcite-flow-item>
-            <calcite-list id="results">
-              <calcite-notice open>
-                <div slot="message">
-                  Click on the map to search for nearby places
-                </div>
-              </calcite-notice>
-            </calcite-list>
-          </calcite-flow-item>
-        </calcite-flow>
-      </calcite-panel>
-    </calcite-shell-panel>
-    <div id="displayMap"></div>
-  </calcite-shell> -->
+
+  <section class="header esri-widget">
+    <div class="btns">
+      <div class="btn-switch active-map" data-id="0">Buy Map</div>
+      <div class="btn-switch" data-id="1">Rent Map</div>
+    </div>
+  </section>
+
 
   <div id="displayMap">
-
   </div>
+
+
   <!-- width-scale="l" -->
-<!-- <calcite-shell id="calsite-shell"> -->
     <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start" >
         <calcite-flow id="example-flow" class="contentW01">
             <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
               <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
-              <!-- <calcite-block heading="Recommended for you"></calcite-block>
-              <calcite-block heading="Recommended for you"></calcite-block> -->
                 <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
                     <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
-                        <!-- <calcite-list-item label="Narnia Community College" description="Wardobe, IA">
-                        </calcite-list-item>
-                        <calcite-list-item label="University of Acme" description="Acmeton, CA"></calcite-list-item>
-                        <calcite-list-item label="Roadrunner Trade School" description="Zion, UT"></calcite-list-item>
-                        <calcite-list-item label="Cartographic Institute" description="Redlands, CA">
-                        </calcite-list-item> -->
                     </calcite-list>
                 </calcite-block>
             </calcite-flow-item>
         </calcite-flow>
     </calcite-shell-panel>
-    <!-- <calcite-panel heading="Content">
-
-    </calcite-panel> -->
-<!-- </calcite-shell> -->
 
   <script type="module" src="script.js"></script>
 </body>
