@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kuwait Pricing Map</title>
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.8.5/calcite.esm.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.8.5/calcite.css" />
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
   <style>
     html,
@@ -15,153 +17,24 @@
       height: 100%;
       width: 100%;
       background-color: rgb(232, 243, 243);
+      
     }
 
+    
+    /* #displayMap {
+      flex: 1;
+    } */
 
-    .card {
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      width: 320px;
-      box-sizing: border-box;
-      position: absolute;
-      display: none;
+    .contentW {
+      --calcite-shell-panel-min-width: 400px;
     }
 
-    #first-card {
-      display: block;
+    .contentW01 {
+      --calcite-shell-panel-min-width: 400px;
     }
 
-    .card h2,
-    .card h3 {
-      margin: 0 0 20px;
-      color: #333;
-      font-size: 20px;
-    }
-
-    .prices,
-    .price-wrapper {
-      display: flex;
-      align-items: center;
-    }
-
-    .color-palette img {
-      height: 100px;
-    }
-
-    .price-details,
-    .price-label-container,
-    .price-input-container {
-      margin-left: 10px;
-    }
-
-    .price {
-      margin-bottom: 15px;
-    }
-
-    .label,
-    .price-label-container p {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .value,
-    .price-input-container p {
-      margin-left: 5px;
-      color: #555;
-      font-size: 16px;
-    }
-
-    .note {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #999;
-    }
-
-    .view-properties {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      text-align: center;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 20px;
-      width: 100%;
-      font-size: 16px;
-    }
-
-    .view-properties:hover {
-      background-color: #c0392b;
-    }
-
-    .card-back-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-    }
-
-    .card-back {
-      background: none;
-      border: none;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      padding: 10px 0;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .card-back-icon {
-      margin-right: 10px;
-      width: 24px;
-      height: 24px;
-    }
-
-    .card-back-container hr {
-      width: 100%;
-      border: 1px solid #e0e0e0;
-      margin: 0;
-    }
-
-    .rating {
-      background-color: #f39c12;
-      color: white;
-      padding: 2px 5px;
-      border-radius: 3px;
-      font-size: 14px;
-    }
-
-    .review {
-      color: #888;
-      font-size: 14px;
-      margin-left: 10px;
-    }
-
-    .card-content {
-      padding-top: 20px;
-    }
-
-    .price-wrapper {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .price-label-container p,
-    .price-input-container p {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      line-height: 1.2;
-    }
-
-    .price-wrapper svg {
-      margin-right: 5px;
-      vertical-align: middle;
-      width: 18px;
-      height: 18px;
+    #first-flow-item-block {
+      --calcite-block-padding: 0px;
     }
   </style>
 
@@ -171,87 +44,64 @@
 </head>
 
 <body>
+  <!-- <calcite-shell>
+    <calcite-shell-panel slot="panel-start" position="start" id="contents">
+      <calcite-combobox id="categorySelect" placeholder="Filter by category" overlay-positioning="fixed" selection-mode="single">
+        <calcite-combobox-item selected value="10000" text-label="Arts and Entertainment"></calcite-combobox-item>
+        <calcite-combobox-item value="11000" text-label="Business and Professional Services"></calcite-combobox-item>
+        <calcite-combobox-item value="12000" text-label="Community and Government"></calcite-combobox-item>
+        <calcite-combobox-item value="13000" text-label="Dining and Drinking"></calcite-combobox-item>
+        <calcite-combobox-item value="15000" text-label="Health and Medicine"></calcite-combobox-item>
+        <calcite-combobox-item value="16000" text-label="Landmarks and Outdoors"></calcite-combobox-item>
+        <calcite-combobox-item value="17000" text-label="Retail"></calcite-combobox-item>
+        <calcite-combobox-item value="18000" text-label="Sports and Recreation"></calcite-combobox-item>
+        <calcite-combobox-item value="19000" text-label="Travel and Transportation"></calcite-combobox-item>
+      </calcite-combobox>
+      <calcite-panel class="contents">
+        <calcite-flow id="flow">
+          <calcite-flow-item>
+            <calcite-list id="results">
+              <calcite-notice open>
+                <div slot="message">
+                  Click on the map to search for nearby places
+                </div>
+              </calcite-notice>
+            </calcite-list>
+          </calcite-flow-item>
+        </calcite-flow>
+      </calcite-panel>
+    </calcite-shell-panel>
+    <div id="displayMap"></div>
+  </calcite-shell> -->
 
   <div id="displayMap">
 
   </div>
+  <!-- width-scale="l" -->
+<!-- <calcite-shell id="calsite-shell"> -->
+    <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start" >
+        <calcite-flow id="example-flow" class="contentW01">
+            <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
+              <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
+              <!-- <calcite-block heading="Recommended for you"></calcite-block>
+              <calcite-block heading="Recommended for you"></calcite-block> -->
+                <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
+                    <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
+                        <!-- <calcite-list-item label="Narnia Community College" description="Wardobe, IA">
+                        </calcite-list-item>
+                        <calcite-list-item label="University of Acme" description="Acmeton, CA"></calcite-list-item>
+                        <calcite-list-item label="Roadrunner Trade School" description="Zion, UT"></calcite-list-item>
+                        <calcite-list-item label="Cartographic Institute" description="Redlands, CA">
+                        </calcite-list-item> -->
+                    </calcite-list>
+                </calcite-block>
+            </calcite-flow-item>
+        </calcite-flow>
+    </calcite-shell-panel>
+    <!-- <calcite-panel heading="Content">
 
-  <!-- First Card -->
-  <div class="card" id="first-card">
-    <h2>Kuwait prices</h2>
-    <div class="prices">
-      <div class="color-palette">
-        <img src="https://static-assets.propertyfinder.com/images/color-palette.svg" alt="Color Palette">
-      </div>
-      <div class="price-details">
-        <div class="price">
-          <span class="label">Highest:</span>
-          <span class="value">2,500,000 KD/year</span>
-        </div>
-        <div class="price">
-          <span class="label">Average:</span>
-          <span class="value">95,000 KD/year</span>
-        </div>
-        <div class="price">
-          <span class="label">Lowest:</span>
-          <span class="value">27,000 KD/year</span>
-        </div>
-      </div>
-    </div>
-    <div class="note">
-      * The data displayed is based on listing price in last 3 months.
-    </div>
-    <button class="view-properties">View Details</button>
-  </div>
-  <!-- onclick="closeSecondCard()" -->
-  <!-- Second Card -->
-  <div class="card second-card" id="second-card">
-    <div class="card-back-container">
-      <button class="card-back" id="backButton">
-        <svg class="card-back-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M10.3536 6.14645C10.5488 6.34171 10.5488 6.65829 10.3536 6.85355L5.70711 11.5H19.5C19.7761 11.5 20 11.7239 20 12C20 12.2761 19.7761 12.5 19.5 12.5H5.70711L10.3536 17.1464C10.5488 17.3417 10.5488 17.6583 10.3536 17.8536C10.1583 18.0488 9.84171 18.0488 9.64645 17.8536L4.14645 12.3536C3.95118 12.1583 3.95118 11.8417 4.14645 11.6464L9.64645 6.14645C9.84171 5.95118 10.1583 5.95118 10.3536 6.14645Z"
-            fill="currentColor"></path>
-        </svg>
-        <p>Back to Kuwait prices</p>
-      </button>
-      <hr>
-    </div>
-    <div class="card-content" id="areaDetails">
-      <h3><span id="areaNH"></span> <span class="rating">3.9/5</span> <span class="review">1 review</span></h3>
-      <p>Sports Enclave | Mostly villas</p>
-      <div class="price-wrapper">
-        <div class="price-label-container">
-          <p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M11.7427 6.63847C11.7427 6.59533 11.7672 6.48021 11.9808 6.30658C12.1904 6.1362 12.5241 5.96057 12.9807 5.80357C13.8891 5.49124 15.1763 5.28906 16.6216 5.28906C18.0668 5.28906 19.354 5.49124 20.2624 5.80357C20.719 5.96057 21.0527 6.1362 21.2623 6.30658C21.4759 6.48021 21.5004 6.59533 21.5004 6.63847L21.5004 6.64125H21.498V6.66345C21.4884 6.71842 21.443 6.82344 21.2623 6.97036C21.0527 7.14073 20.719 7.31636 20.2624 7.47336C19.354 7.78569 18.0668 7.98787 16.6216 7.98787C15.1763 7.98787 13.8891 7.78569 12.9807 7.47336C12.5241 7.31636 12.1904 7.14073 11.9808 6.97036C11.7672 6.79672 11.7427 6.6816 11.7427 6.63847ZM22.5004 6.63847C22.5004 6.66348 22.4996 6.68822 22.498 6.71268V8.78162L22.498 8.78513H22.5006V10.9255C22.5006 10.9501 22.4998 10.9744 22.4983 10.9985V13.0621L22.4981 13.0848V15.1986L22.4981 15.2022H22.4999V17.3425C22.4999 17.7951 22.2377 18.1629 21.9097 18.435C21.5785 18.7098 21.1231 18.9386 20.5871 19.123C19.5114 19.4928 18.0857 19.692 16.6211 19.692C15.4283 19.692 14.2935 19.5608 13.3529 19.3274C12.6303 19.148 11.9735 18.8966 11.4992 18.5623C10.4373 19.2926 9.16577 19.6915 7.85348 19.6915C4.35387 19.6915 1.5 16.909 1.5 13.456C1.5 10.003 4.35387 7.22048 7.85348 7.22048C8.89279 7.22048 9.87515 7.46589 10.7427 7.90139V6.64125V6.63847C10.7427 6.1709 11.0193 5.7995 11.35 5.53062C11.6848 5.25847 12.1388 5.03559 12.6556 4.85791C13.6939 4.50089 15.0961 4.28906 16.6216 4.28906C18.147 4.28906 19.5492 4.50089 20.5875 4.85791C21.1043 5.03559 21.5583 5.25847 21.8931 5.53062C22.2238 5.7995 22.5004 6.1709 22.5004 6.63847ZM20.5875 8.41902C20.9225 8.30384 21.2312 8.16966 21.498 8.01537V8.78162C21.498 8.81974 21.4768 8.93231 21.2693 9.10453C21.0649 9.27412 20.7324 9.45387 20.26 9.6164C19.3175 9.94042 18.008 10.131 16.6192 10.131C15.1339 10.131 13.7528 9.9134 12.8119 9.55664C12.4981 9.17291 12.139 8.82649 11.7427 8.52511V8.01401C12.0101 8.16887 12.3196 8.3035 12.6556 8.41902C13.6939 8.77604 15.0961 8.98787 16.6216 8.98787C18.147 8.98787 19.5492 8.77604 20.5875 8.41902ZM14.0424 12.0391C13.9427 11.6175 13.7995 11.2126 13.6176 10.8289C14.5183 11.0266 15.5582 11.131 16.6192 11.131C18.0839 11.131 19.5096 10.9318 20.5854 10.562C20.927 10.4445 21.2358 10.3089 21.5006 10.155V10.9217H21.4983V10.9493C21.4891 11.001 21.4463 11.1036 21.2718 11.2484C21.0674 11.418 20.7351 11.5977 20.2626 11.7603C19.32 12.0843 18.0106 12.2749 16.6218 12.2749C15.708 12.2749 14.8185 12.192 14.0424 12.0391ZM20.5879 12.7059C20.9275 12.5891 21.2346 12.4545 21.4983 12.3017L21.4981 13.0583V13.069C21.4954 13.1128 21.4657 13.2222 21.2695 13.385C21.0651 13.5546 20.7328 13.7343 20.2604 13.8968C19.3179 14.2208 18.0084 14.4115 16.6195 14.4115C15.753 14.4115 14.9083 14.3373 14.1617 14.199C14.1917 13.9537 14.207 13.7056 14.207 13.456C14.207 13.3308 14.2032 13.2065 14.1958 13.0831C14.954 13.2093 15.7827 13.2749 16.6218 13.2749C18.0864 13.2749 19.5122 13.0757 20.5879 12.7059ZM20.5856 14.8424C20.9261 14.7253 21.2339 14.5903 21.4981 14.437V15.1986C21.4981 15.2367 21.4769 15.3493 21.2693 15.5215C21.0649 15.6911 20.7326 15.8708 20.2602 16.0333C19.3176 16.3574 18.0081 16.548 16.6193 16.548C15.4955 16.548 14.4235 16.4232 13.5565 16.2041C13.7213 15.8748 13.8562 15.5316 13.9597 15.1786C14.7801 15.332 15.6938 15.4115 16.6195 15.4115C18.0841 15.4115 19.5099 15.2123 20.5856 14.8424ZM12.342 17.8686C12.5887 17.627 12.8132 17.3674 13.014 17.093C14.0374 17.3897 15.3132 17.548 16.6193 17.548C18.0839 17.548 19.5097 17.3488 20.5854 16.979C20.9267 16.8616 21.2353 16.7262 21.4999 16.5724V17.3425C21.4999 17.3807 21.4787 17.4932 21.2711 17.6655C21.0667 17.8351 20.7343 18.0148 20.2619 18.1773C19.3193 18.5014 18.0099 18.692 16.6211 18.692C15.4962 18.692 14.4437 18.5678 13.5938 18.3568C13.0551 18.2231 12.6272 18.0617 12.3166 17.8934L12.342 17.8686ZM2.5 13.456C2.5 10.5743 4.88693 8.22048 7.85348 8.22048C10.82 8.22048 13.207 10.5743 13.207 13.456C13.207 14.8412 12.6453 16.1718 11.6423 17.1542C10.6388 18.1371 9.27609 18.6915 7.85348 18.6915C4.88693 18.6915 2.5 16.3377 2.5 13.456ZM8.35459 9.71002V10.1187C9.13107 10.3469 9.70001 11.0887 9.70001 11.9685H8.77501C8.77501 11.4377 8.36087 11.0074 7.85001 11.0074C7.33914 11.0074 6.925 11.4377 6.925 11.9685C6.925 12.4992 7.33914 12.9295 7.85001 12.9295C8.87174 12.9295 9.70001 13.79 9.70001 14.8516C9.70001 15.7314 9.13107 16.4731 8.35459 16.7013V17.11H7.3455V16.7013C6.56898 16.4732 6 15.7314 6 14.8516H6.925C6.925 15.3824 7.33914 15.8126 7.85001 15.8126C8.36087 15.8126 8.77501 15.3824 8.77501 14.8516C8.77501 14.3208 8.36087 13.8905 7.85001 13.8905C6.82828 13.8905 6 13.03 6 11.9685C6 11.0886 6.56898 10.3469 7.3455 10.1187V9.71002H8.35459Z"
-                fill="currentColor"></path>
-            </svg></p>
-          <p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M9.34118 12.262C9.34118 11.6677 8.97921 11.1321 8.42358 10.9047C7.86865 10.6773 7.22922 10.8031 6.80387 11.2233C6.37923 11.6435 6.25176 12.2752 6.48204 12.8246C6.71232 13.3733 7.25387 13.7313 7.85457 13.7313C8.45527 13.7313 8.99752 14.0893 9.22709 14.6381C9.45737 15.1868 9.32991 15.8192 8.90526 16.2394C8.48062 16.6596 7.84119 16.7854 7.28556 16.558C6.73063 16.3306 6.36796 15.795 6.36796 15.2006M7.8519 10.7903V9.99074M7.8519 17.4765V16.6776M21.9983 11.2012C21.9983 12.2226 19.5901 13.0506 16.6195 13.0506C15.5082 13.0506 14.4757 12.9348 13.6184 12.7362M21.9983 11.2012C21.9983 10.1798 19.5901 9.35182 16.6195 9.35182C14.8846 9.35182 13.3416 9.63422 12.358 10.0726M21.9983 11.2012V13.3416C21.9983 13.8323 21.4314 14.3022 20.423 14.6492C19.4138 14.9961 18.0462 15.191 16.6195 15.191C15.5378 15.191 14.4808 15.079 13.5871 14.8689M12.7996 16.7802C13.8094 17.1306 15.1848 17.3275 16.6193 17.3275C18.046 17.3275 19.4136 17.1326 20.4228 16.7857C21.4312 16.4388 21.9981 15.9688 21.9981 15.4781V13.3378M11.5162 18.2047C12.2464 18.9608 14.3035 19.4715 16.6211 19.4715C18.0478 19.4715 19.4154 19.2766 20.4246 18.9297C21.433 18.5827 21.9999 18.1128 21.9999 17.6221V15.4817M13.6184 12.7362C13.6766 13.0608 13.707 13.3947 13.707 13.7355C13.707 15.2566 13.0901 16.7156 11.9922 17.7909C10.8943 18.8663 9.40558 19.471 7.85348 19.471C4.6204 19.471 2 16.9029 2 13.7355C2 10.5682 4.6204 8 7.85348 8C9.66509 8 11.2843 8.80635 12.358 10.0726M13.6184 12.7362C13.4389 11.7349 12.9942 10.823 12.358 10.0726"
-                stroke="currentColor" stroke-linejoin="round"></path>
-            </svg></p>
-          <p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M9.34118 11.9825C9.34118 11.3881 8.97921 10.8525 8.42358 10.6252C7.86865 10.3978 7.22922 10.5236 6.80387 10.9438C6.37923 11.364 6.25176 11.9956 6.48204 12.5451C6.71232 13.0938 7.25387 13.4518 7.85457 13.4518C8.45527 13.4518 8.99752 13.8098 9.22709 14.3585C9.45737 14.9073 9.32991 15.5396 8.90526 15.9598C8.48062 16.38 7.84119 16.5058 7.28556 16.2784C6.73063 16.0511 6.36796 15.5155 6.36796 14.9211M7.8519 10.5108V9.7112M7.8519 17.197V16.398M22.0004 15.2019C22.0004 16.2233 19.5922 17.0513 16.6216 17.0513C15.1321 17.0513 13.784 16.8432 12.8099 16.5068M22.0004 15.2019C22.0004 14.1805 19.5922 13.3525 16.6216 13.3525C15.546 13.3525 14.5442 13.4611 13.7037 13.648M22.0004 15.2019L21.9999 17.3425C21.9999 17.8332 21.433 18.3032 20.4246 18.6501C19.4154 18.9971 18.0478 19.192 16.6211 19.192C14.3035 19.192 12.2464 18.6812 11.5162 17.9251M13.7037 13.648C13.7059 13.5841 13.707 13.5201 13.707 13.456C13.707 10.2886 11.0866 7.72046 7.85348 7.72046C4.6204 7.72046 2 10.2886 2 13.456C2 16.6233 4.6204 19.1915 7.85348 19.1915C9.40558 19.1915 10.8943 18.5868 11.9922 17.5114C12.3048 17.2052 12.5785 16.8678 12.8099 16.5068M13.7037 13.648C13.6688 14.6679 13.3571 15.6535 12.8099 16.5068"
-                stroke="currentColor" stroke-linejoin="round"></path>
-            </svg></p>
-        </div>
-        <div class="price-input-container">
-          <p><span>Highest:</span> <span id="H"></span> KD/year</p>
-          <p><span>Average:</span> <span id="Av"></span> KD/year</p>
-          <p><span>Lowest:</span> <span id="L"></span> KD/year</p>
-        </div>
-      </div>
-      <div class="note">
-        * The data displayed is based on listing price in last 3 months.
-      </div>
-      <button class="view-properties">View 6 properties</button>
-    </div>
-  </div>
-
+    </calcite-panel> -->
+<!-- </calcite-shell> -->
 
   <script type="module" src="script.js"></script>
 </body>

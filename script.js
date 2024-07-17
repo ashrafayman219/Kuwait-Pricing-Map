@@ -2,12 +2,26 @@
 var displayMap;
 let view;
 let pricingBuy;
-let featureLayers = [];
+let featureLayers;
+let featureLayersreturned;
+let graphicsArr = [];
+let GArr;
+let pricingGroupLayer;
+let layerKuwaitPricing;
+let layerviewKuwaitPricing;
+let layerInvestments;
+let layerviewInvestments;
+let investL;
 let geojsons = [
   {
     regionsURL:
-      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/KT.json",
-    title: "Kuwait Pricing",
+      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Residential%20Houses.json",
+    title: "Residential Houses",
+  },
+  {
+    regionsURL:
+      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Investments.json",
+    title: "Investments",
   },
 ];
 
@@ -34,10 +48,9 @@ async function initializeMapKuwaitPricing() {
       FeatureLayer,
       Legend,
       GeoJSONLayer,
-      ImageElement,
-      MediaLayer,
-      ExtentAndRotationGeoreference,
-      Extent,
+      reactiveUtils,
+      GroupLayer,
+      promiseUtils,
     ] = await Promise.all([
       loadModule("esri/config"),
       loadModule("esri/Map"),
@@ -45,6 +58,9 @@ async function initializeMapKuwaitPricing() {
       loadModule("esri/layers/FeatureLayer"),
       loadModule("esri/widgets/Legend"),
       loadModule("esri/layers/GeoJSONLayer"),
+      loadModule("esri/core/reactiveUtils"),
+      loadModule("esri/layers/GroupLayer"),
+      loadModule("esri/core/promiseUtils"),
     ]);
 
     esriConfig.apiKey =
@@ -52,7 +68,7 @@ async function initializeMapKuwaitPricing() {
 
     const Pricing01 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#ABD0E6",
+      color: "#455873ff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -62,7 +78,7 @@ async function initializeMapKuwaitPricing() {
 
     const Pricing02 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#82BADB",
+      color: "#3f83a1ff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -72,7 +88,7 @@ async function initializeMapKuwaitPricing() {
 
     const Pricing03 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#3787C0",
+      color: "#00ffffff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -80,9 +96,9 @@ async function initializeMapKuwaitPricing() {
       },
     };
 
-    const region3 = {
+    const Pricing04 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#b1cdc2",
+      color: "#4d8c8cff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -90,9 +106,9 @@ async function initializeMapKuwaitPricing() {
       },
     };
 
-    const region2 = {
+    const Pricing05 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#38627a",
+      color: "#99c5b6ff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -100,9 +116,9 @@ async function initializeMapKuwaitPricing() {
       },
     };
 
-    const region1 = {
+    const Pricing06 = {
       type: "simple-fill", // autocasts as new SimpleFillSymbol()
-      color: "#0d2644",
+      color: "#e3f1d2ff",
       style: "solid",
       outline: {
         width: 0.2,
@@ -112,39 +128,78 @@ async function initializeMapKuwaitPricing() {
 
     const renderer = {
       type: "class-breaks", // autocasts as new ClassBreaksRenderer()
-      field: "Average",
+      field: "Highest",
       // normalizationField: "EDUCBASECY",
       legendOptions: {
-        title: "Kuwait prices",
+        title: "Properties Areas",
       },
-      defaultSymbol: {
-        type: "simple-fill", // autocasts as new SimpleFillSymbol()
-        color: "gray",
-        // style: "backward-diagonal",
-        outline: {
-          width: 0.5,
-          color: [50, 50, 50, 0.6],
-        },
-      },
-      defaultLabel: "no data",
+      // defaultSymbol: {
+      //   type: "simple-fill", // autocasts as new SimpleFillSymbol()
+      //   color: "gray",
+      //   // style: "backward-diagonal",
+      //   outline: {
+      //     width: 0.5,
+      //     color: [50, 50, 50, 0.6],
+      //   },
+      // },
+      // defaultLabel: "no data",
       classBreakInfos: [
         {
-          minValue: 328000,
-          maxValue: 622500,
+          minValue: 0,
+          maxValue: 150000,
           symbol: Pricing01,
-          label: "< 35%",
+          label: "Lowest: 150,000",
         },
         {
-          minValue: 622500,
-          maxValue: 1222500,
+          minValue: 150000,
+          maxValue: 659707,
           symbol: Pricing02,
-          label: "35 - 50%",
+          label: "Average: 659,707",
         },
         {
-          minValue: 1222500,
-          maxValue: 5000000,
+          minValue: 659707,
+          maxValue: 3000000,
           symbol: Pricing03,
-          label: "50 - 75%",
+          label: "Highest: 2,575,000",
+        },
+      ],
+    };
+
+    const renderer01 = {
+      type: "class-breaks", // autocasts as new ClassBreaksRenderer()
+      field: "Highest",
+      // normalizationField: "EDUCBASECY",
+      legendOptions: {
+        title: "Properties Areas",
+      },
+      // defaultSymbol: {
+      //   type: "simple-fill", // autocasts as new SimpleFillSymbol()
+      //   color: "gray",
+      //   // style: "backward-diagonal",
+      //   outline: {
+      //     width: 0.5,
+      //     color: [50, 50, 50, 0.6],
+      //   },
+      // },
+      // defaultLabel: "no data",
+      classBreakInfos: [
+        {
+          minValue: 0,
+          maxValue: 517500,
+          symbol: Pricing04,
+          label: "Lowest: 517,500",
+        },
+        {
+          minValue: 517500,
+          maxValue: 1384814,
+          symbol: Pricing05,
+          label: "Average: 1,384,814",
+        },
+        {
+          minValue: 1384814,
+          maxValue: 5000000,
+          symbol: Pricing06,
+          label: "Highest: 4,260,000",
         },
       ],
     };
@@ -197,8 +252,8 @@ async function initializeMapKuwaitPricing() {
       // autocasts as new LabelClass()
       symbol: {
         type: "text", // autocasts as new TextSymbol()
-        color: "gray",
-        haloColor: "gray",
+        color: "black",
+        // haloColor: "gray",
         // backgroundColor: "black",
         // borderLineColor: "black",
         // borderLineSize: 1,
@@ -211,9 +266,9 @@ async function initializeMapKuwaitPricing() {
           // weight: "bold"
         },
       },
-      labelPlacement: "above-center",
+      labelPlacement: "above-right",
       labelExpressionInfo: {
-        expression: "$feature.N_EName",
+        expression: "$feature.areaName",
       },
     };
 
@@ -228,36 +283,7 @@ async function initializeMapKuwaitPricing() {
         selectedGraphic = null;
       }
     }
-    
-    function openSecondCard() {
-      document.getElementById("first-card").style.display = "none";
-      document.getElementById("second-card").style.display = "block";
-    }
 
-    document.getElementById("backButton").addEventListener('click', closeSecondCard)
-    function closeSecondCard() {
-      clearSelection()
-      view.whenLayerView(pricingBuy).then(function (layerView) {
-        view.goTo(
-          {
-            target: pricingBuy.fullExtent,
-            // zoom: 11
-          },
-          {
-            duration: 2000,
-          }
-        );
-      });
-
-      document.getElementById("second-card").style.display = "none";
-      document.getElementById("first-card").style.display = "block";
-    }
-
-    var areaDetails = document.getElementById("areaDetails");
-    var areaNH = document.getElementById("areaNH");
-    var H = document.getElementById("H");
-    var Av = document.getElementById("Av");
-    var L = document.getElementById("L");
     async function createFeatureLayers(geojsons) {
       const arrayFeatures = [];
       for (const geojsonURL of geojsons) {
@@ -274,13 +300,22 @@ async function initializeMapKuwaitPricing() {
             objectIdField: results.fields[0].name,
             geometryType: results.geometryType,
             title: geojsonLayer.title,
-            renderer: renderer,
+            // renderer: renderer,
           });
           arrayFeatures.push(featureLayer);
         });
-        featureLayers = arrayFeatures;
       }
-      return featureLayers;
+      featureLayersreturned = arrayFeatures;
+      pricingGroupLayer = new GroupLayer({
+        title: "Kuwait Prices",
+        visible: true,
+        visibilityMode: "exclusive",
+        layers: featureLayersreturned,
+        opacity: 0.75,
+      });
+      displayMap.add(pricingGroupLayer);
+      console.log(pricingGroupLayer, "hhh");
+      return featureLayersreturned;
     }
 
     displayMap = new Map({
@@ -288,6 +323,13 @@ async function initializeMapKuwaitPricing() {
       basemap: "arcgis-light-gray",
       // layers: [],
     });
+
+    try {
+      featureLayers = await createFeatureLayers(geojsons);
+      // now we have the featureslayers
+    } catch (error) {
+      // here if not found
+    }
 
     view = new MapView({
       center: [47.4818, 29.3117], // longitude, latitude, centered on Kuwait
@@ -306,174 +348,333 @@ async function initializeMapKuwaitPricing() {
       //   fillOpacity: 0,
       // },
     });
+    view.popupEnabled = false;
 
-    await createFeatureLayers(geojsons).then((featureLayers) => {
-      console.log(featureLayers);
+    const calsiteshell = document.getElementById("calsite-shell");
+    calsiteshell.style.display = "none"; // Hide calsite-shell initially
+
+    const flow = document.getElementById("example-flow");
+    const items = document.querySelectorAll("calcite-list-item");
+    const calciteList = document.getElementById("calcite-list");
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function createFeatureFlowItems(graphicStatues, isLastLevel) {
+      calciteList.innerHTML = "";
+      var featureFirstBlock = document.getElementById("first-flow-item-block");
+      featureFirstBlock.description = `${graphicStatues.length} results`;
+      graphicStatues?.forEach((graph) => {
+        const featureFlowListItem = document.createElement("calcite-list-item");
+
+        featureFlowListItem.label = graph.graphic.attributes.areaName;
+        featureFlowListItem.description = `Street Type: ${graph.graphic.attributes.streetType} - Space value: ${graph.graphic.attributes.Space}`;
+
+        const featureAction = document.createElement("calcite-action");
+        featureAction.slot = "actions-end";
+        featureAction.icon = "number-of-territories";
+        featureAction.text = "Kuwait Areas";
+        featureFlowListItem.append(featureAction);
+
+        calciteList.append(featureFlowListItem);
+
+        let FHighest = numberWithCommas(graph.graphic.attributes.Highest);
+        let FAverage = numberWithCommas(graph.graphic.attributes.Average);
+        let FLowest = numberWithCommas(graph.graphic.attributes.Lowest);
+        // console.log(numberWithCommas(graph.attributes.Highest));
+
+        featureFlowListItem.addEventListener(
+          "calciteListItemSelect",
+          function () {
+            const newFeatureFlowItem =
+              document.createElement("calcite-flow-item");
+            newFeatureFlowItem.heading = `${graph.graphic.attributes.areaName}`;
+            newFeatureFlowItem.description = `${graph.graphic.attributes.areaName}`;
+
+            const calciteAccordion =
+              document.createElement("calcite-accordion");
+            calciteAccordion.appearance = "solid";
+            calciteAccordion.setAttribute("icon-position", "start");
+            calciteAccordion.setAttribute("icon-type", "chevron");
+
+            const calciteAccordionItem = document.createElement(
+              "calcite-accordion-item"
+            );
+            calciteAccordionItem.description =
+              "we can plot any description here";
+            calciteAccordionItem.heading = "Highest";
+            calciteAccordionItem.setAttribute(
+              "icon-start",
+              "graph-moving-average"
+            );
+            calciteAccordionItem.setAttribute("expanded", true);
+
+            calciteAccordion.append(calciteAccordionItem);
+
+            const calciteAccordionItemNotice =
+              document.createElement("calcite-notice");
+            calciteAccordionItemNotice.setAttribute("open", true);
+            calciteAccordionItem.append(calciteAccordionItemNotice);
+
+            const calciteAccordionItemnoticeContent =
+              document.createElement("div");
+            calciteAccordionItemnoticeContent.slot = "message";
+            calciteAccordionItemnoticeContent.innerHTML = `${FHighest}`;
+            calciteAccordionItemNotice.append(
+              calciteAccordionItemnoticeContent
+            );
+            newFeatureFlowItem.append(calciteAccordion);
+
+            //2
+            const calciteAccordionItem01 = document.createElement(
+              "calcite-accordion-item"
+            );
+            calciteAccordionItem01.description =
+              "we can plot any description here";
+            calciteAccordionItem01.heading = "Average";
+            calciteAccordionItem01.setAttribute(
+              "icon-start",
+              "graph-moving-average"
+            );
+            calciteAccordionItem01.setAttribute("expanded", true);
+
+            calciteAccordion.append(calciteAccordionItem01);
+
+            const calciteAccordionItemNotice01 =
+              document.createElement("calcite-notice");
+            calciteAccordionItemNotice01.setAttribute("open", true);
+            calciteAccordionItem01.append(calciteAccordionItemNotice01);
+
+            const calciteAccordionItemnoticeContent01 =
+              document.createElement("div");
+            calciteAccordionItemnoticeContent01.slot = "message";
+            calciteAccordionItemnoticeContent01.innerHTML = `${FAverage}`;
+            calciteAccordionItemNotice01.append(
+              calciteAccordionItemnoticeContent01
+            );
+
+            //3
+            const calciteAccordionItem02 = document.createElement(
+              "calcite-accordion-item"
+            );
+            calciteAccordionItem02.description =
+              "we can plot any description here";
+            calciteAccordionItem02.heading = "Lowest";
+            calciteAccordionItem02.setAttribute(
+              "icon-start",
+              "graph-moving-average"
+            );
+            calciteAccordionItem02.setAttribute("expanded", true);
+
+            calciteAccordion.append(calciteAccordionItem02);
+
+            const calciteAccordionItemNotice02 =
+              document.createElement("calcite-notice");
+            calciteAccordionItemNotice02.setAttribute("open", true);
+            calciteAccordionItem02.append(calciteAccordionItemNotice02);
+
+            const calciteAccordionItemnoticeContent02 =
+              document.createElement("div");
+            calciteAccordionItemnoticeContent02.slot = "message";
+            calciteAccordionItemnoticeContent02.innerHTML = `${FLowest}`;
+            calciteAccordionItemNotice02.append(
+              calciteAccordionItemnoticeContent02
+            );
+
+            if (!isLastLevel) {
+              const button = document.createElement("calcite-button");
+              button.slot = "footer";
+              button.width = "full";
+              button.innerText = "Move to a third Flow Item";
+              button.addEventListener("click", (event) => {
+                alert("F");
+              });
+              if (!isLastLevel) newFeatureFlowItem.append(button);
+            }
+
+            flow.append(newFeatureFlowItem);
+          }
+        );
+      });
+      // flow.appendChild(featureFlowItem);
+    }
+
+    view.when(() => {
+      pricingGroupLayer.layers.items.map(async (layy) => {
+        if (layy.visible === true) {
+          view.whenLayerView(layy).then(function (layerView) {
+            console.log(layerView, "layerViewlayerViewlayerView");
+            view.goTo(
+              {
+                target: layy.fullExtent,
+                // zoom: 11
+              },
+              {
+                duration: 2500,
+              }
+            );
+          });
+        }
+
+        if (layy.title === "Investments") {
+          view.whenLayerView(layy).then(function (layerView) {
+            layerInvestments = layy;
+            layerviewInvestments = layerView;
+            layy.renderer = renderer01;
+          });
+        } else {
+          view.whenLayerView(layy).then(function (layerView) {
+            layerKuwaitPricing = layy;
+            layerviewKuwaitPricing = layerView;
+            layy.renderer = renderer;
+          });
+        }
+      });
+    });
+
+    try {
       if (featureLayers) {
-        featureLayers.map((layer) => {
-          displayMap.add(layer);
-          view.ui.add("first-card", "bottom-left");
-          view.ui.add("second-card", "bottom-left");
-          if (layer.title === "Kuwait Pricing") {
-            pricingBuy = layer;
-            console.log(layer, "layereee");
-            // layer.labelingInfo = labelClass;
-            layer.popupTemplate = template;
-            layer.orderBy = [{
-              field: "Space",
-              order: "descending"  // "descending" | "ascending"
-            }];
-            // layer.visible = false;
-            view.whenLayerView(layer).then(function (layerView) {
-              view.goTo(
-                {
-                  target: layer.fullExtent,
-                  // zoom: 11
-                },
-                {
-                  duration: 2000,
-                }
-              );
+        const debouncedUpdate = promiseUtils.debounce(
+          async (event, isClick) => {
+            // console.log(event, "eventt");
+            // Perform a hitTest on the View
+            const hitTest = await view.hitTest(event);
+            // console.log(event, "eventt");
+            // Make sure graphic has a popupTemplate
+            const results = hitTest.results.filter((result) => {
+              if (result.layer.title === "Residential Houses") {
+                return result.layer.title === "Residential Houses";
+              } else {
+                return result.layer.title === "Investments";
+              }
             });
 
-            view
-              .when()
-              .then(() => layer.when())
-              .then(() => view.whenLayerView(layer))
-              .then((layerView) => {
-                // let moveHighlight = null;
-                // let selectedHighlight = null;
-                // let selectedGraphic = null;
-
-                view.on("pointer-move", (evt) => handleEvent(evt, false));
-                view.on("click", (evt) => handleEvent(evt, true));
-
-                function handleEvent(evt, isClick) {
-                  view.hitTest(evt).then((response) => {
-                    const features = response.results.filter(
-                      (result) => result.graphic.layer === layer
-                    );
-                    if (features.length > 0) {
-                      const graphic = features[0].graphic;
-
-                      if (isClick) {
-                        if (selectedHighlight) {
-                          selectedHighlight.remove();
-                        }
-                        document.getElementById("first-card").style.display =
-                          "none";
-                        document.getElementById("second-card").style.display =
-                          "block";
-                        selectedGraphic = graphic;
-                        console.log(graphic, "graphS");
-                        areaNH.innerHTML = graphic.attributes.areaName;
-
-                        H.innerHTML = graphic.attributes.Highest;
-                        Av.innerHTML = graphic.attributes.Average;
-                        L.innerHTML = graphic.attributes.Lowest;
-                        view.highlightOptions = {
-                          color: "#000000",
-                          fillOpacity: 0,
-                          haloOpacity: 1,
-                          haloColor: "black",
-                          shadowColor: "black",
-                          shadowOpacity: 1,
-                        };
-                        selectedHighlight = layerView.highlight(graphic);
-                        view.goTo(
-                          {
-                            target: graphic,
-                            // zoom: 11
-                          },
-                          {
-                            duration: 1000,
-                          }
-                        );
-                      } else {
-                        if (graphic !== selectedGraphic) {
-                          if (moveHighlight) {
-                            moveHighlight.remove();
-                          }
-                          view.highlightOptions = {
-                            color: "#000000",
-                            fillOpacity: 0,
-                            haloOpacity: 1,
-                            haloColor: "black",
-                            shadowColor: "black",
-                            shadowOpacity: 1,
-                          };
-                          moveHighlight = layerView.highlight(graphic);
-                        }
-                      }
-                    } else {
-                      if (isClick) {
-                        clearSelection();
-                        view.goTo(
-                          {
-                            target: layer.fullExtent,
-                            // zoom: 11
-                          },
-                          {
-                            duration: 2000,
-                          }
-                        );
-                        document.getElementById("second-card").style.display =
-                          "none";
-                        document.getElementById("first-card").style.display =
-                          "block";
-                      } else {
-                        removeMoveHighlight();
-                      }
-                    }
-                  });
+            const result = results;
+            const graphic = results[0];
+            // console.log(result, "result[0]]]]"); // array of graphics
+            if (isClick) {
+              if (result && graphic) {
+                calsiteshell.style.display = "block";
+                view.ui.add(calsiteshell, "bottom-left");
+                view.ui.remove(legend);
+                selectedGraphic = graphic.graphic;
+                // console.log(selectedGraphic, "selectedGraphic");
+                createFeatureFlowItems(result, false);
+                view.goTo(
+                  {
+                    target: selectedGraphic,
+                    // zoom: 11
+                  },
+                  {
+                    duration: 1000,
+                  }
+                );
+                view.highlightOptions = {
+                  color: "#000000",
+                  fillOpacity: 0,
+                  haloOpacity: 1,
+                  haloColor: "black",
+                  shadowColor: "black",
+                  shadowOpacity: 1,
+                };
+                if (selectedGraphic.layer.title === "Investments") {
+                  selectedHighlight =
+                    layerviewInvestments.highlight(selectedGraphic);
+                } else {
+                  selectedHighlight =
+                    layerviewKuwaitPricing.highlight(selectedGraphic);
                 }
+              } else {
+                // console.log("no results");
+                clearSelection();
+                if (calsiteshell) {
+                  calsiteshell.style.display = "none";
+                }
+                view.ui.remove(calsiteshell);
+                view.ui.add(legend, "bottom-left");
+                pricingGroupLayer.layers.items.map(async (layy) => {
+                  if (layy.visible === true) {
+                    view.whenLayerView(layy).then(function (layerView) {
+                      // console.log(layerView, "layerViewlayerViewlayerView");
+                      view.goTo(
+                        {
+                          target: layy.fullExtent,
+                          // zoom: 11
+                        },
+                        {
+                          duration: 1000,
+                        }
+                      );
+                    });
+                  }
+                });
+              }
+            } else {
+              if (result && graphic) {
+                let selectedGraphic01 = graphic.graphic;
 
+                // console.log(selectedGraphic01, "hereeeeeeeeeeeeeeeeeeeee")
+                if (moveHighlight) {
+                  moveHighlight.remove();
+                }
+                view.highlightOptions = {
+                  color: "#000000",
+                  fillOpacity: 0,
+                  haloOpacity: 1,
+                  haloColor: "black",
+                  shadowColor: "black",
+                  shadowOpacity: 1,
+                };
+                if (selectedGraphic01.layer.title === "Investments") {
+                  moveHighlight =
+                    layerviewInvestments.highlight(selectedGraphic01);
+                } else {
+                  moveHighlight =
+                    layerviewKuwaitPricing.highlight(selectedGraphic01);
+                }
+              } else {
+                // console.log("RRRRR")
+                removeMoveHighlight();
                 function removeMoveHighlight() {
                   if (moveHighlight) {
                     moveHighlight.remove();
                     moveHighlight = null;
                   }
                 }
-
-
-              })
-              .catch((error) => {
-                console.error("Error initializing map:", error);
-                throw error;
-              });
+              }
+            }
           }
+        );
+
+        // Listen for the click event on the View
+        view.on("click", (event) => {
+          debouncedUpdate(event, true).catch((err) => {
+            if (!promiseUtils.isAbortError(err)) {
+              throw err;
+            }
+          });
+        });
+
+        // Listen for the pointer-move event on the View
+        view.on("pointer-move", (event) => {
+          debouncedUpdate(event, false).catch((err) => {
+            if (!promiseUtils.isAbortError(err)) {
+              throw err;
+            }
+          });
         });
       }
-    });
+    } catch (error) {
+      // here if not found
+    }
 
-    // view.on("click", function (event) {
-    //   view.hitTest(event).then(function (response) {
-    //     if (response.results.length) {
-    //       view.highlightOptions = {
-    //         color: "#000000",
-    //         fillOpacity: 0,
-    //         haloOpacity: 1,
-    //         haloColor: "black",
-    //         shadowColor: "black",
-    //         shadowOpacity: 1
-    //       }
-    //       let graphic = response.results.filter(function (result) {
-    //         return (
-    //           result.graphic.layer === pricingBuy
-    //           // result.graphic.layer === KansasCityBoundaries ||
-    //         );
-    //       })[0].graphic;
-    //       view.goTo(
-    //         {
-    //           target: graphic,
-    //         },
-    //         {
-    //           duration: 1000,
-    //         }
-    //       );
-    //     }
-    //   });
-    // });
+    // try {
+    //   const featureLayers = await createFeatureLayers(geojsons);
+    //   // now we have the featureslayers
+    // } catch (error) {
+    //   // here if not found
+    // }
 
     await view.when();
 
@@ -499,26 +700,10 @@ async function initializeMapKuwaitPricing() {
     legend.hideLayersNotInCurrentView = true;
     view.ui.add(legend, "bottom-left");
 
-    // view.whenLayerView(KansasCityBoundaries).then(function (layerView) {
-    //   view.goTo(
-    //     {
-    //       target: KansasCityBoundaries.fullExtent,
-    //     },
-    //     {
-    //       duration: 2000,
-    //     }
-    //   );
-    // });
-
     //add widgets
     addWidgets()
       .then(([view, displayMap]) => {
-        console.log(
-          "Widgets Returned From Require Scope",
-          view,
-          displayMap,
-          featureLayer
-        );
+        console.log("Widgets Returned From Require Scope", view, displayMap);
         // You can work with the view object here
       })
       .catch((error) => {
@@ -607,6 +792,13 @@ async function addWidgets() {
       view: view,
       listItemCreatedFunction: function (event) {
         var item = event.item;
+        // item.watch("visible", (event) => {
+        //   layerList.operationalItems.forEach((layerView) => {
+        //     if (layerView.layer.id != item.layer.id) {
+        //       layerView.visible = false;
+        //     }
+        //   });
+        // });
         // displays the legend for each layer list item
         item.panel = {
           content: "legend",
@@ -625,7 +817,8 @@ async function addWidgets() {
       expandTooltip: "Layer List",
       collapseTooltip: "Close",
     });
-
+    layerList.selectionMode = "single";
+    Expand5.expanded = true;
     view.ui.add([Expand5], { position: "top-left", index: 6 });
     // view.ui.add("controlsWidget", "top-right");
 
