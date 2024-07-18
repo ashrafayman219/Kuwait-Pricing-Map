@@ -5,63 +5,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kuwait Pricing Map</title>
-  <script type="module" src="https://js.arcgis.com/calcite-components/2.8.5/calcite.esm.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.8.5/calcite.css" />
+  <script type="module" src="https://js.arcgis.com/calcite-components/2.10.0/calcite.esm.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.10.0/calcite.css" />
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
   <style>
     html,
-    body
-      {
+    body,
+    #displayMap {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
       background-color: rgb(232, 243, 243);
-      overflow: hidden;
+
     }
 
-    #displayMap {
-        position: absolute;
-        right: 0;
-        left: 0;
-        top: 60px;
-        bottom: 0;
-      }
+    /* #displayMap {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 60px;
+      bottom: 0;
+    }
 
-      .header {
-        position: absolute;
-        top: 0;
-        width: 100%;
-        height: 10%;
-      }
+    .header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 10%;
+    }
 
-      .btns {
-        margin: 0 auto;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
-      }
+    .btns {
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    }
 
-      .btn-switch {
-        flex-grow: 4;
-        background-color: rgba(34, 111, 14, 0.5);
-        color: #fff;
-        margin: 1px;
-        width: 50%;
-        padding: 20px;
-        overflow: auto;
-        text-align: center;
-        cursor: pointer;
-      }
+    .btn-switch {
+      flex-grow: 4;
+      background-color: rgba(34, 111, 14, 0.5);
+      color: #fff;
+      margin: 1px;
+      width: 50%;
+      padding: 20px;
+      overflow: auto;
+      text-align: center;
+      cursor: pointer;
+    }
 
-      .active-map {
-        color: #fff;
-        background-color: rgba(34, 111, 14, 1);
-      }
+    .active-map {
+      color: #fff;
+      background-color: rgba(34, 111, 14, 1);
+    } */
 
-    
+
     /* #displayMap {
       flex: 1;
     } */
@@ -77,6 +77,23 @@
     #first-flow-item-block {
       --calcite-block-padding: 0px;
     }
+
+
+    .drop-width {
+      width: 200px;
+    }
+    .layersbtn {
+      width: 200px;
+    }
+    .esri-ui-corner .esri-component {
+    box-shadow: 0 0px 0px #0000004d;
+    }
+    
+    calcite-dropdown {
+      --calcite-color-brand: #71c96e;
+      --calcite-color-brand-hover: #67b564;
+    }
+
   </style>
 
   <script src="https://js.arcgis.com/4.30/"></script>
@@ -86,30 +103,51 @@
 
 <body>
 
-  <section class="header esri-widget">
+  <!-- <section class="header esri-widget">
     <div class="btns">
       <div class="btn-switch active-map" data-id="0">Buy Map</div>
       <div class="btn-switch" data-id="1">Rent Map</div>
     </div>
-  </section>
+  </section> -->
 
 
   <div id="displayMap">
   </div>
 
+  <!-- <calcite-dropdown id="drop-down-main" width="m">
+    <calcite-button id="layersbtn" slot="trigger" icon-start="caret-down">Buy</calcite-button>
+  </calcite-dropdown> -->
+
+  <calcite-dropdown class="drop-width" id="drop-down">
+    <calcite-button id="areasbtn" class="layersbtn" slot="trigger" icon-start="caret-down" appearance="solid">Select the area</calcite-button>
+    <calcite-dropdown-group group-title="Available Areas">
+      <calcite-dropdown-item id="item1">Residential Houses</calcite-dropdown-item>
+      <calcite-dropdown-item id="item2">Investments</calcite-dropdown-item>
+    </calcite-dropdown-group>
+  </calcite-dropdown>
+
+  <calcite-dropdown class="drop-width" id="drop-down-st" width="m">
+    <calcite-button id="stbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose street type</calcite-button>
+    <calcite-dropdown-group group-title="Available street types"></calcite-dropdown-group>
+  </calcite-dropdown>
+
+  <calcite-dropdown class="drop-width" id="drop-down-sp" width="m">
+    <calcite-button id="spbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose space value</calcite-button>
+    <calcite-dropdown-group group-title="Available spaces values"></calcite-dropdown-group>
+  </calcite-dropdown>
 
   <!-- width-scale="l" -->
-    <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start" >
-        <calcite-flow id="example-flow" class="contentW01">
-            <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
-              <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
-                <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
-                    <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
-                    </calcite-list>
-                </calcite-block>
-            </calcite-flow-item>
-        </calcite-flow>
-    </calcite-shell-panel>
+  <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start">
+    <calcite-flow id="example-flow" class="contentW01">
+      <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
+        <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
+        <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
+          <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
+          </calcite-list>
+        </calcite-block>
+      </calcite-flow-item>
+    </calcite-flow>
+  </calcite-shell-panel>
 
   <script type="module" src="script.js"></script>
 </body>
