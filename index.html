@@ -10,47 +10,48 @@
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
   <style>
     html,
-    body,
-    #displayMap {
+    body
+    {
       padding: 0;
       margin: 0;
-      height: 100%;
       width: 100%;
       background-color: rgb(232, 243, 243);
-
+      overflow: hidden;
     }
 
-    /* #displayMap {
+    #displayMap {
       position: absolute;
       right: 0;
       left: 0;
-      top: 60px;
+      top: 2.75rem;
       bottom: 0;
     }
 
+
+/* 
     .header {
       position: absolute;
       top: 0;
       width: 100%;
       height: 10%;
-    }
+    } */
 
-    .btns {
+    /* .btns {
       margin: 0 auto;
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
       overflow: auto;
-    }
+    } */
 
     .btn-switch {
-      flex-grow: 4;
+      flex-grow: 2;
       background-color: rgba(34, 111, 14, 0.5);
       color: #fff;
       margin: 1px;
       width: 50%;
-      padding: 20px;
+      padding: 8px;
       overflow: auto;
       text-align: center;
       cursor: pointer;
@@ -59,12 +60,11 @@
     .active-map {
       color: #fff;
       background-color: rgba(34, 111, 14, 1);
-    } */
-
-
-    /* #displayMap {
+    }
+/* 
+    #displayMap {
       flex: 1;
-    } */
+    }  */
 
     .contentW {
       --calcite-shell-panel-min-width: 400px;
@@ -80,19 +80,20 @@
 
 
     .drop-width {
-      width: 200px;
+      width: 235px;
     }
     .layersbtn {
-      width: 200px;
+      width: 235px;
     }
     .esri-ui-corner .esri-component {
     box-shadow: 0 0px 0px #0000004d;
     }
     
-    calcite-dropdown {
+    /* calcite-dropdown {
       --calcite-color-brand: #71c96e;
       --calcite-color-brand-hover: #67b564;
-    }
+    } */
+
 
   </style>
 
@@ -103,51 +104,88 @@
 
 <body>
 
-  <!-- <section class="header esri-widget">
-    <div class="btns">
-      <div class="btn-switch active-map" data-id="0">Buy Map</div>
-      <div class="btn-switch" data-id="1">Rent Map</div>
-    </div>
-  </section> -->
+  <!-- New Style -->
+
+    <section class="header esri-widget">
+      <div class="btns">
+        <calcite-segmented-control scale="l" id="SC"  width="full">
+          <calcite-segmented-control-item id="buySegment" value="Buy" checked>
+            Buy
+          </calcite-segmented-control-item>
+          <calcite-segmented-control-item id="rentSegment" value="Rent">Rent</calcite-segmented-control-item>
+      </calcite-segmented-control>
+      </div>
+    </section>
+    
+
+    <calcite-dropdown class="drop-width" id="drop-down-Beds">
+      <calcite-button id="areasbtn1" class="layersbtn" slot="trigger" icon-start="caret-down" appearance="solid">Select the area</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available Areas">
+        <calcite-dropdown-item id="item1">Private Housing Rental</calcite-dropdown-item>
+        <calcite-dropdown-item id="item2">Chalets</calcite-dropdown-item>
+      </calcite-dropdown-group>
+    </calcite-dropdown>
 
 
-  <div id="displayMap">
-  </div>
+    <calcite-dropdown class="drop-width" id="drop-down-beds" width="m">
+      <calcite-button id="beds" class="layersbtn" slot="trigger" icon-start="caret-down">Choose No. Beds</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available houses types"></calcite-dropdown-group>
+    </calcite-dropdown>
 
-  <!-- <calcite-dropdown id="drop-down-main" width="m">
-    <calcite-button id="layersbtn" slot="trigger" icon-start="caret-down">Buy</calcite-button>
-  </calcite-dropdown> -->
 
-  <calcite-dropdown class="drop-width" id="drop-down">
-    <calcite-button id="areasbtn" class="layersbtn" slot="trigger" icon-start="caret-down" appearance="solid">Select the area</calcite-button>
-    <calcite-dropdown-group group-title="Available Areas">
-      <calcite-dropdown-item id="item1">Residential Houses</calcite-dropdown-item>
-      <calcite-dropdown-item id="item2">Investments</calcite-dropdown-item>
-    </calcite-dropdown-group>
-  </calcite-dropdown>
 
-  <calcite-dropdown class="drop-width" id="drop-down-st" width="m">
-    <calcite-button id="stbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose street type</calcite-button>
-    <calcite-dropdown-group group-title="Available street types"></calcite-dropdown-group>
-  </calcite-dropdown>
 
-  <calcite-dropdown class="drop-width" id="drop-down-sp" width="m">
-    <calcite-button id="spbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose space value</calcite-button>
-    <calcite-dropdown-group group-title="Available spaces values"></calcite-dropdown-group>
-  </calcite-dropdown>
 
-  <!-- width-scale="l" -->
-  <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start">
-    <calcite-flow id="example-flow" class="contentW01">
-      <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
-        <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
-        <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
-          <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
-          </calcite-list>
-        </calcite-block>
-      </calcite-flow-item>
-    </calcite-flow>
-  </calcite-shell-panel>
+    <calcite-dropdown class="drop-width" id="drop-down-sizes" width="m">
+      <calcite-button id="sizes" class="layersbtn" slot="trigger" icon-start="caret-down">Choose size value</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available sizes values"></calcite-dropdown-group>
+    </calcite-dropdown>
+
+    <calcite-dropdown class="drop-width" id="drop-down">
+      <calcite-button id="areasbtn" class="layersbtn" slot="trigger" icon-start="caret-down" appearance="solid">Select the area</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available Areas">
+        <calcite-dropdown-item id="item1">Residential Houses</calcite-dropdown-item>
+        <calcite-dropdown-item id="item2">Investments</calcite-dropdown-item>
+      </calcite-dropdown-group>
+    </calcite-dropdown>
+
+
+
+    <calcite-dropdown class="drop-width" id="drop-down-st" width="m">
+      <calcite-button id="stbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose street type</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available street types"></calcite-dropdown-group>
+    </calcite-dropdown>
+  
+
+    <calcite-dropdown class="drop-width" id="drop-down-sp" width="m">
+      <calcite-button id="spbtn" class="layersbtn" slot="trigger" icon-start="caret-down">Choose space value</calcite-button>
+      <calcite-dropdown-group class="layersbtn" group-title="Available spaces values"></calcite-dropdown-group>
+    </calcite-dropdown>
+
+
+    <calcite-shell-panel class="contentW" id="calsite-shell" slot="panel-start">
+      <calcite-flow id="example-flow" class="contentW01">
+        <calcite-flow-item heading="Kuwait Prices" description="See your total number of areas here">
+          <calcite-action icon="urban-model" scale="l" text="Favorite" slot="header-actions-start"></calcite-action>
+          <calcite-block id="first-flow-item-block" heading="Recommended for you" open>
+            <calcite-list id="calcite-list" selection-mode="single" drag-enabled selection-appearance="icon">
+            </calcite-list>
+          </calcite-block>
+        </calcite-flow-item>
+      </calcite-flow>
+    </calcite-shell-panel>
+
+
+    <div id="displayMap"></div>
+
+
+<!--     
+    <calcite-panel heading="Content">
+    </calcite-panel> -->
+
+
+
+
 
   <script type="module" src="script.js"></script>
 </body>
