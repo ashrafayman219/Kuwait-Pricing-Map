@@ -21,12 +21,12 @@ let investL;
 let geojsons = [
   {
     regionsURL:
-      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Investments.json",
+      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Investments.geojson",
     title: "Investments",
   },
   {
     regionsURL:
-      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Residential%20Houses.json",
+      "https://raw.githubusercontent.com/ashrafayman219/Kuwait-Pricing-Map/main/Residential%20Houses.geojson",
     title: "Residential Houses",
   },
 ];
