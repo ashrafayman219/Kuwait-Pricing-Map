@@ -1721,6 +1721,9 @@ async function initializeMapKuwaitPricingRent() {
       if (bedsbtn.innerHTML) {
         if (bedsbtn.innerHTML === "Choose unit type") {
           graphicStatues?.forEach((graph) => {
+            let FHighest;
+            let FAverage;
+            let FLowest;
             // if (stbtn.innerHTML) {
             // if (graph.graphic.attributes.streetType === stbtn.innerHTML) {
             const featureFlowListItem =
@@ -1730,8 +1733,14 @@ async function initializeMapKuwaitPricingRent() {
             if (graph.graphic.layer.title === "Chalets") {
               let meterPrice = numberWithCommas(graph.graphic.attributes.AveragePrice);
               featureFlowListItem.description = `Length of the waterfront in metres: ${graph.graphic.attributes.waterFL} - Average price per linear meter of the waterfront: ${meterPrice}`;
+              FHighest = numberWithCommas(graph.graphic.attributes.Highest);
+              FAverage = numberWithCommas(graph.graphic.attributes.Average);
+              FLowest = numberWithCommas(graph.graphic.attributes.Lowest);
             } else {
               featureFlowListItem.description = `Description: ${graph.graphic.attributes.description} - Size / Area: ${graph.graphic.attributes.area}`;
+              FHighest = numberWithCommas(graph.graphic.attributes.generalHighest);
+              FAverage = numberWithCommas(graph.graphic.attributes.generalAverage);
+              FLowest = numberWithCommas(graph.graphic.attributes.generalLowest);
             }
 
             const featureAction = document.createElement("calcite-action");
@@ -1742,9 +1751,7 @@ async function initializeMapKuwaitPricingRent() {
 
             calciteList.append(featureFlowListItem);
 
-            let FHighest = numberWithCommas(graph.graphic.attributes.generalHighest);
-            let FAverage = numberWithCommas(graph.graphic.attributes.generalAverage);
-            let FLowest = numberWithCommas(graph.graphic.attributes.generalLowest);
+
             // console.log(numberWithCommas(graph.attributes.Highest));
             featureFirstBlock.heading = `Prices range: ${FHighest} - ${FLowest}`;
 
@@ -2938,10 +2945,12 @@ async function initializeMapKuwaitPricingRent() {
       const selectedItem = event.target.textContent;
       if (selectedItem === "Chalets") {
         if (dropdownS) {
+          dropdownb.style.display = "none";
           dropdownS.style.display = "none";
           // view.ui.remove(dropdownS);
         }
       } else {
+        dropdownb.style.display = "block";
         dropdownS.style.display = "block";
         // view.ui.add(dropdownS, "top-left");
       }
@@ -3006,12 +3015,7 @@ async function initializeMapKuwaitPricingRent() {
         //   return;
         // } else {
         
-        if (!bedsN.includes(item.attributes.description)) {
-          bedsN.push(item.attributes.description);
-          calciteItemBeds = document.createElement("calcite-dropdown-item");
-          calciteItemBeds.innerHTML = item.attributes.description;
-          dropdownb.append(calciteItemBeds);
-        }
+
 
         if (!groundN.includes(item.attributes.ground)) {
           groundN.push(item.attributes.ground);
@@ -3025,6 +3029,13 @@ async function initializeMapKuwaitPricingRent() {
           calciteItemfloor12 = document.createElement("calcite-dropdown-item");
           calciteItemfloor12.innerHTML = item.attributes.floor12;
           dropdownb.append(calciteItemfloor12);
+        }
+
+        if (!bedsN.includes(item.attributes.description)) {
+          bedsN.push(item.attributes.description);
+          calciteItemBeds = document.createElement("calcite-dropdown-item");
+          calciteItemBeds.innerHTML = item.attributes.description;
+          dropdownb.append(calciteItemBeds);
         }
         // }
       });
@@ -3165,12 +3176,12 @@ async function initializeMapKuwaitPricingRent() {
                     layy.source.items.map(async (item) => {
                       if (item.attributes.area == selectedAreaSize) {
                         const filter = new FeatureFilter({
-                          where:
-                            "area = '" +
-                            selectedAreaSize +
-                            "' AND ground = '" +
-                            selectedBedsN +
-                            "'",
+                          where: "area = '" + selectedAreaSize + "'",
+                            // "area = '" +
+                            // selectedAreaSize +
+                            // "' AND ground = '" +
+                            // selectedBedsN +
+                            // "'",
                         });
                         layerView.filter = filter;
 
